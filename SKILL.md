@@ -1,364 +1,57 @@
 ---
 name: metalsmith-component-builder
-version: 1.0.0
-description: Build static websites using Metalsmith's component-based architecture without knowing Metalsmith internals. Use when users want to create professional websites using sectioned pages and reusable components, including phrases like "build me a website", "create a landing page", "add a new page", "add a section", or when working with the Metalsmith Micro Starter or components from metalsmith-components.com. Supports three paths based on user's technical comfort level, from complete novice (Claude builds everything as downloadable ZIP) to Claude Desktop with MCP (direct filesystem access) to full local development.
+version: 2.0.0
+description: Build static websites using Metalsmith's component-based architecture. Triggers on phrases like "build me a website", "create a landing page", "help me make a site", or when working with Metalsmith components. Assumes user has VS Code, Node.js, Git, and is running Claude Code in an empty project directory.
 ---
 
 # Metalsmith Component Website Builder
 
-Build professional static websites using Metalsmith's component-based architecture through conversational guidance. This skill adapts to the user's technical comfort level.
+Build professional static websites through conversation. The user describes what they want, Claude handles the implementation using Metalsmith's component-based architecture.
 
-## Authoritative Resource
+## Prerequisites (User Has Already Done This)
 
-**https://metalsmith-components.com is the authoritative source** for this structured Metalsmith approach. When answering questions about components, configuration, or best practices:
+The blogpost at [link to blogpost] walked users through setup before they started Claude Code:
 
-1. **Reference pages** (`/references/sections/` and `/references/partials/`) - Complete documentation for each component with live examples
-2. **Blog posts** (`/blog/`) - Educational content explaining concepts and patterns
-3. **Installation guide** (`/blog/installing-metalsmith-components/`) - How to add components
+- VS Code installed
+- Node.js 18+ installed
+- Git installed and configured
+- GitHub account created
+- Netlify account created (connected to GitHub)
+- This skill installed at `~/.claude/skills/metalsmith-component-builder-skill`
 
-If uncertain about component configuration, search or fetch from metalsmith-components.com.
+Do not re-verify these unless the user reports problems.
 
-### Key Blog Posts at metalsmith-components.com
+## Authoritative Resources
 
-Fetch these posts when questions arise:
+**https://metalsmith-components.com** is the authoritative source for component configuration and patterns. When uncertain about component options:
 
-- `/blog/installing-metalsmith-components/` - Download and install component packages
-- `/section-anatomy/` - How components are structured internally
-- `/yaml-to-html/` - The rendering process from frontmatter to final output
+1. Fetch reference pages at `/references/sections/[component-name]/`
+2. Fetch blog posts for conceptual understanding
+3. Check `/blog/installing-metalsmith-components/` for installation patterns
+
+Key documentation:
+- `/section-anatomy/` - How components are structured
+- `/yaml-to-html/` - The rendering process
 - `/blog/building-pages-with-components/` - Page construction patterns
-- `/blog/building-interactive-components/` - Adding JavaScript behavior
-- `/blog/building-component-search-system/` - Finding the right components
 
-**Related Skills**: For JavaScript code, read `/mnt/skills/user/javascript-development/SKILL.md`. For CSS layouts, read `/mnt/skills/user/css-layout-development/SKILL.md`.
+## Workflow Overview
 
----
-
-## Phase 0: Path Selection (DO NOT SKIP)
-
-Before anything else, determine which workflow path suits the user. Ask:
-
-"Have you built websites before using command-line tools like Node.js, or would this be your first time working with code?"
-
-Based on their response, select one of three paths:
-
-### Path A: Complete Novice (Claude Builds Everything)
-
-**For users who**: Have never used command line, are uncomfortable with technical setup, just want a website without learning development tools.
-
-**How it works**: Claude creates the entire website as downloadable files. User uploads to GitHub via web interface, connects Netlify with a few clicks. No local tools required.
-
-**Limitations**: Slower iteration (edit → download → upload → deploy → view). No live preview during development.
-
-→ Go to [Path A Workflow](#path-a-workflow-claude-builds-everything)
-
-### Path B: Claude Desktop with MCP
-
-**For users who**: Have Claude Desktop installed with MCP servers configured, want Claude to work directly with their local files.
-
-**How it works**: Claude reads/writes files directly to user's computer, can pull content from Google Drive, handles git operations. User just talks to Claude.
-
-**Requirements**: Claude Desktop with filesystem MCP (and optionally git, Google Drive MCPs).
-
-→ Go to [Path B Workflow](#path-b-workflow-claude-desktop-with-mcp)
-
-### Path C: Local Development
-
-**For users who**: Are comfortable with terminal/command line, want full development experience with live reload, may already have Node.js installed.
-
-**How it works**: Traditional local development workflow with npm, live preview server, direct file editing.
-
-→ Go to [Path C Workflow](#path-c-workflow-local-development)
+1. **Project Setup** - Clone starter, install dependencies, start dev server
+2. **Discovery Dialog** - Understand what the website needs
+3. **Component Selection** - Identify required components, download and install
+4. **Page Building** - Create pages iteratively with live preview
+5. **Review & Refine** - User previews at localhost, provides feedback
+6. **Publish** - Push to GitHub, Netlify auto-deploys
 
 ---
 
-## What to Expect (Explain to All Users)
+## Phase 1: Project Setup
 
-Before starting any path, ensure the user understands what's involved:
-
-"Building a website this way involves a few pieces:
-
-**The Website Files** - I'll help you create the pages and content. These are just text files with a specific structure.
-
-**GitHub (free account)** - This stores your website files online and tracks changes. Think of it as a save system for your site.
-
-**Netlify (free account)** - This takes your files from GitHub and turns them into a live website anyone can visit. It automatically updates when you make changes.
-
-**Your content** - Text, images, and information about what you want on the site.
-
-No sensitive data is required. GitHub and Netlify accounts just need an email address."
-
----
-
-# Path A Workflow: Claude Builds Everything
-
-For complete novices. Claude creates all files, user uploads via web interfaces.
-
-## A1: Account Setup
-
-Guide user through creating accounts if needed:
-
-**GitHub Account**
-1. Go to github.com
-2. Click "Sign up"
-3. Enter email, create password, choose username
-4. Verify email
-
-**Netlify Account**
-1. Go to netlify.com
-2. Click "Sign up"
-3. Choose "Sign up with GitHub" (recommended)
-4. Authorize the connection
-
-## A2: Discovery Dialog (DO NOT SKIP)
-
-Before building, understand what the user needs through conversation.
-
-### About the Website
-- What is this website for? (business, portfolio, nonprofit, personal blog, event)
-- Who is the audience?
-- What should visitors do? (contact you, buy something, learn, sign up)
-
-### Homepage
-- What first impression should visitors get?
-- What's the most important message or call to action?
-- Any specific images or video in mind?
-
-### Other Pages
-- What pages beyond the homepage? (About, Services, Contact, Blog, Team, Pricing)
-- How much content exists already vs. needs to be written?
-
-### Content Sources
-- Where is your content now? (Google Docs, Word files, written notes, nowhere yet)
-- Do you have images ready? Where are they stored?
-- Any logos or brand colors?
-
-### Technical Needs
-- Need a contact form?
-- Blog with regular posts?
-- Any special features? (search, image galleries, maps)
-
-Document requirements before proceeding to build.
-
-## A3: Component Selection
-
-Based on discovery, determine which components are needed.
-
-**Included in micro starter:**
-- `text-only` - Text content with optional CTAs
-
-**Download from metalsmith-components.com if needed:**
-
-| Category | Components |
-|----------|-----------|
-| Content | hero, banner, multi-media, columns, compound |
-| Media | image-only, video-only, audio-only, image-grid, image-compare |
-| Interactive | accordion, flip-cards, simple-slider, hero-slider |
-| Lists | blurbs, manual-card, collection-list, logos-list, team-grid |
-| Specialized | testimonial, pricing-table, stats, steps, timeline, maps, search |
-
-Claude downloads required components and includes them in the final ZIP.
-
-## A4: Claude Builds the Site
-
-Claude creates the complete website:
-
-1. Start with the micro starter from https://github.com/wernerglinka/microStarter
-2. Download any additional components needed (Claude handles this)
-3. Modify content files based on discovery:
-   - `lib/data/site.json` - site title, description, owner
-   - `src/index.md` - homepage with user's content
-   - `src/*.md` - additional pages
-4. Add user's images to `lib/assets/images/`
-5. Package everything as a ZIP for download
-
-Provide the ZIP to the user.
-
-## A5: Upload to GitHub
-
-Guide user through web-based upload:
-
-1. Go to github.com and sign in
-2. Click "+" icon (top right) → "New repository"
-3. Name it (e.g., "my-website")
-4. Keep it Public
-5. Check "Add a README file"
-6. Click "Create repository"
-7. Click "Add file" → "Upload files"
-8. Drag the contents of the unzipped folder into the upload area
-9. Click "Commit changes"
-
-## A6: Deploy on Netlify
-
-Guide user through Netlify connection:
-
-1. Go to netlify.com and sign in
-2. Click "Add new site" → "Import an existing project"
-3. Click "Deploy with GitHub"
-4. Select the repository
-5. Verify build settings:
-   - Build command: `npm run build`
-   - Publish directory: `build`
-6. Click "Deploy site"
-7. Wait 1-2 minutes, then click the URL to see the live site
-
-## A7: Making Changes
-
-When user wants to edit:
-
-**Option 1: Return to Claude**
-- Describe changes needed
-- Claude provides updated files
-- User uploads to GitHub (replacing old files)
-- Netlify auto-rebuilds
-
-**Option 2: Edit on GitHub directly** (for simple text changes)
-- Navigate to file in GitHub
-- Click pencil icon to edit
-- Make changes to the YAML/markdown
-- Click "Commit changes"
-- Netlify auto-rebuilds
-
----
-
-# Path B Workflow: Claude Desktop with MCP
-
-For users with Claude Desktop and MCP servers configured.
-
-## B1: Verify MCP Setup
-
-Check available MCP servers:
-
-**Required:**
-- Filesystem MCP - to read/write local files
-
-**Recommended:**
-- Git MCP - for version control
-- Google Drive MCP - to pull content from Docs
-
-If filesystem MCP isn't available, fall back to Path A.
-
-## B2: Environment Check
-
-Determine what's available:
-- Does user have Node.js 18+? (`node --version`)
-- Does user have git? (`git --version`)
-
-If yes, can run local dev server. If no, will deploy to see results.
-
-## B3: Project Setup
-
-Ask: "Where would you like your website project folder?"
-
-**If user has git and Node.js:**
-```bash
-git clone https://github.com/wernerglinka/microStarter.git my-website
-cd my-website
-npm install
-npm start
-```
-
-**If not**, Claude creates the project structure directly via filesystem MCP.
-
-## B4: Discovery Dialog (DO NOT SKIP)
-
-Same as Path A - understand what the user needs:
-- Website purpose and audience
-- Homepage requirements
-- Additional pages
-- Content sources
-- Technical needs
-
-## B5: Content Gathering
-
-If Google Drive MCP is available:
-- Ask what documents contain their content
-- Read directly from Google Docs
-- Extract text for pages
-
-If not:
-- Ask user to paste content
-- Or provide file paths to local documents
-
-## B6: Component Selection & Download
-
-Based on discovery, determine needed components.
-
-Download additional components:
-```bash
-# From project root
-curl -L https://metalsmith-components.com/downloads/sections/hero.zip -o hero.zip
-unzip hero.zip
-cd hero
-./install.sh
-cd ..
-```
-
-## B7: Build Pages
-
-Using filesystem MCP, create/modify files:
-
-1. Update `lib/data/site.json` with site metadata
-2. Create page files in `src/` with user's content
-3. Organize images in `lib/assets/images/`
-
-## B8: Preview & Iterate
-
-If dev server is running:
-- View at http://localhost:3000
-- Gather feedback
-- Modify files directly
-- Changes appear immediately
-
-If no dev server, proceed to deployment to see results.
-
-## B9: Deploy
-
-Initialize git and push:
-```bash
-git init
-git add .
-git commit -m "Initial site"
-```
-
-Create GitHub repo (user does via web), then:
-```bash
-git remote add origin https://github.com/USERNAME/REPO.git
-git push -u origin main
-```
-
-Connect Netlify same as Path A.
-
----
-
-# Path C Workflow: Local Development
-
-For users comfortable with command line.
-
-## C1: Environment Check
-
-Verify prerequisites:
-```bash
-node --version    # Requires 18+
-npm --version
-git --version
-```
-
-If missing, guide installation:
-- **Node.js**: Download from nodejs.org or use nvm
-- **Git**: Download from git-scm.com
-
-## C2: Account Setup
-
-Verify or create:
-- GitHub account (github.com)
-- Netlify account (netlify.com) - recommend "Sign up with GitHub"
-
-## C3: Project Setup
+When user says they want to build a website, immediately set up the project:
 
 ```bash
-# Clone the micro starter
-git clone https://github.com/wernerglinka/microStarter.git my-website
-cd my-website
+# Clone the micro starter into current directory
+git clone https://github.com/wernerglinka/microStarter.git .
 
 # Install dependencies
 npm install
@@ -367,39 +60,51 @@ npm install
 npm start
 ```
 
-Confirm running at `http://localhost:3000` before proceeding.
+Tell the user:
+> "I've set up your project. Open another terminal and the dev server is running at http://localhost:3000. You should see a basic starter page. Keep that running while we work."
 
-## C4: Discovery Dialog (DO NOT SKIP)
+Wait for confirmation before proceeding.
 
-With dev server running, discuss requirements:
-- Website purpose and audience
-- Homepage requirements
-- Additional pages needed
-- Content sources
-- Technical needs (forms, blog, search)
+---
 
-## C5: Component Selection & Download
+## Phase 2: Discovery Dialog
 
-Based on discovery, download needed components:
+Have a conversation to understand what the user needs. Ask these questions naturally, not as a checklist:
 
-```bash
-# Example: download hero section
-curl -L https://metalsmith-components.com/downloads/sections/hero.zip -o hero.zip
-unzip hero.zip
-cd hero
-./install.sh
-cd ..
-rm -rf hero hero.zip
-```
+**About the website**
+- What is this website for? (business, portfolio, nonprofit, personal, event)
+- Who will visit it?
+- What should visitors do when they arrive?
 
-The install script:
-- Copies files to correct locations
-- Checks for dependencies
-- Offers to clean up when done
+**About the homepage**
+- What's the first thing visitors should see?
+- What's the main message or call to action?
+- Do you have images or video in mind?
 
-Restart dev server after adding components.
+**About other pages**
+- What pages beyond the homepage? (About, Services, Contact, Blog, Team, Pricing)
+- Do you have content ready or do you need help writing it?
 
-### Available Components
+**About special features**
+- Need a contact form?
+- Will you write blog posts?
+- Any special features? (search, image galleries, testimonials)
+
+Summarize what you learned before proceeding:
+> "So you need a photography portfolio with: a hero section showing your best work, an about page with your background, a gallery page, and a contact form. Does that sound right?"
+
+---
+
+## Phase 3: Component Selection
+
+Based on discovery, determine which components are needed.
+
+**Included in starter:**
+- `text-only` - Text content with optional CTAs
+- `header` - Site header with navigation
+- `footer` - Site footer
+
+**Available at metalsmith-components.com:**
 
 | Category | Components |
 |----------|-----------|
@@ -409,9 +114,38 @@ Restart dev server after adding components.
 | Lists | blurbs, manual-card, collection-list, logos-list, team-grid |
 | Specialized | testimonial, pricing-table, stats, steps, timeline, maps, search |
 
-## C6: Page Building
+**Download and install needed components:**
 
-Create pages in `src/` with YAML frontmatter:
+```bash
+# Download component
+curl -L https://metalsmith-components.com/downloads/sections/hero.zip -o hero.zip
+
+# Extract
+unzip hero.zip
+
+# Run install script
+cd hero
+chmod +x install.sh
+./install.sh
+
+# Clean up
+cd ..
+rm -rf hero hero.zip
+```
+
+The install script copies files to correct locations and checks for dependencies. If a component requires partials not yet installed, download those too.
+
+After installing components, restart the dev server:
+```bash
+# In the terminal running npm start, press Ctrl+C then:
+npm start
+```
+
+---
+
+## Phase 4: Page Building
+
+Create pages in `src/` with YAML frontmatter. Every page follows this structure:
 
 ```yaml
 ---
@@ -424,108 +158,43 @@ navigation:
 
 seo:
   title: Page Title
-  description: Page description
-
-sections:
-  - sectionType: hero
-    # section configuration...
-  - sectionType: text-only
-    # section configuration...
----
-```
-
-See [Page Building Reference](#page-building-reference) for section configuration.
-
-## C7: Preview & Iterate
-
-With live reload running:
-1. Edit markdown files in `src/`
-2. Preview changes instantly at localhost:3000
-3. Gather feedback
-4. Refine sections and content
-5. Commit progress regularly
-
-```bash
-git add .
-git commit -m "Add homepage hero and about section"
-```
-
-## C8: Create Repository & Deploy
-
-```bash
-# Remove link to starter
-git remote remove origin
-
-# Create new repo on GitHub (via web), then:
-git remote add origin https://github.com/USERNAME/REPO.git
-git branch -M main
-git push -u origin main
-```
-
-Connect Netlify:
-1. Log in to netlify.com
-2. "Add new site" → "Import an existing project"
-3. Select the GitHub repository
-4. Build command: `npm run build`
-5. Publish directory: `build`
-6. Deploy
-
-## C9: Ongoing Development
-
-```bash
-npm start          # Dev server with live reload
-npm run build      # Production build
-npm run serve      # Preview production build
-npm run fix        # Format and lint code
-```
-
-Commit and push; Netlify auto-deploys.
-
----
-
-# Page Building Reference
-
-## Page Structure
-
-Every page is a markdown file with YAML frontmatter:
-
-```yaml
----
-layout: pages/sections.njk
-bodyClasses: page-name
-
-navigation:
-  navLabel: Page Name    # Menu label
-  navIndex: 1            # Menu order
-
-seo:
-  title: Page Title
   description: Page description for search engines
-  socialImage: /assets/images/social.jpg
 
 sections:
   - sectionType: component-name
-    # section configuration
+    # section configuration...
 ---
 ```
 
-## Section Configuration Pattern
+### Site Configuration
 
-All sections follow this pattern:
+Update `lib/data/site.json` with the user's information:
+
+```json
+{
+  "title": "Site Name",
+  "description": "Site description",
+  "url": "https://their-domain.com/",
+  "locale": "en_US",
+  "defaultImage": "/assets/images/social.png",
+  "siteOwner": "Owner Name"
+}
+```
+
+### Section Configuration Pattern
+
+All sections support these common options:
 
 ```yaml
 - sectionType: component-name
-  containerTag: section          # HTML element: section, article, aside, div
-  id: optional-id
-  classes: optional-classes
-  isDisabled: false              # Set true to hide without removing
+  containerTag: section
   containerFields:
-    inContainer: true            # Wrap in .container
-    isAnimated: true             # Enable scroll animations
+    inContainer: true
+    isAnimated: true
     background:
-      color: '#hex'
-      image: /path/to/image.jpg
-      imageScreen: none          # light, dark, none
+      color: ""
+      image: /assets/images/bg.jpg
+      imageScreen: dark
     noMargin:
       top: false
       bottom: false
@@ -535,7 +204,7 @@ All sections follow this pattern:
   text:
     leadIn: Eyebrow text
     title: Main Title
-    titleTag: h2                 # h1-h6
+    titleTag: h2
     subTitle: Subtitle
     prose: |-
       Markdown content here.
@@ -544,12 +213,114 @@ All sections follow this pattern:
     - url: /path
       label: Button Text
       isButton: true
-      buttonStyle: primary       # primary, secondary, tertiary, inverted
+      buttonStyle: primary
 ```
 
-## Common Section Examples
+### Build Pages Incrementally
 
-### Hero Section
+1. Create or modify a page file
+2. Tell user to refresh localhost:3000
+3. Ask for feedback
+4. Refine based on response
+5. Move to next page
+
+Example workflow:
+> "I've created your homepage with a hero section and about section. Refresh your browser and let me know what you think. Should the hero image be darker? Is the headline right?"
+
+---
+
+## Phase 5: Review & Refine
+
+After each significant change:
+
+1. Remind user to check localhost:3000
+2. Ask specific questions about what they see
+3. Make adjustments based on feedback
+4. Repeat until satisfied
+
+Common refinements:
+- Adjusting text content
+- Changing section order
+- Modifying background colors/images
+- Adding or removing CTAs
+- Tweaking spacing (noMargin, noPadding)
+
+---
+
+## Phase 6: Publish
+
+When the user is happy with their site:
+
+### Set up Git remote
+
+```bash
+# Remove link to starter repo
+git remote remove origin
+```
+
+Ask user for their GitHub username and repository name, then:
+
+```bash
+git remote add origin https://github.com/USERNAME/REPO-NAME.git
+git add .
+git commit -m "Initial website"
+git branch -M main
+git push -u origin main
+```
+
+If they haven't created the repo yet, guide them:
+> "Go to github.com, click the + icon, select 'New repository', name it 'my-website', keep it public, and don't initialize with any files. Then tell me the URL."
+
+### Netlify deployment
+
+If they connected Netlify to GitHub during setup (per blogpost), the site deploys automatically.
+
+If not, guide them:
+1. Go to app.netlify.com
+2. Click "Add new site" → "Import an existing project"  
+3. Click "Deploy with GitHub"
+4. Select the repository
+5. Build command: `npm run build`
+6. Publish directory: `build`
+7. Click "Deploy site"
+
+Tell them:
+> "Your site is deploying. In about a minute, Netlify will give you a URL like random-name-123.netlify.app. That's your live website."
+
+---
+
+## Making Future Changes
+
+When user returns to make updates:
+
+1. They open the project folder in VS Code
+2. Start Claude Code: `claude`
+3. Describe what they want to change
+4. Claude modifies files
+5. User previews at localhost:3000
+6. When satisfied:
+
+```bash
+git add .
+git commit -m "Description of changes"
+git push
+```
+
+Netlify auto-deploys. Site updates in ~1 minute.
+
+---
+
+## Component Reference
+
+For detailed configuration of each component, fetch from metalsmith-components.com:
+
+```
+https://metalsmith-components.com/references/sections/[component-name]/
+```
+
+### Quick Examples
+
+**Hero with background image:**
 ```yaml
 - sectionType: hero
   containerFields:
@@ -557,8 +328,8 @@ All sections follow this pattern:
       image: /assets/images/hero-bg.jpg
       imageScreen: dark
   text:
-    title: Welcome to Our Site
-    prose: Your compelling introduction here.
+    title: Welcome
+    prose: Your introduction here.
   ctas:
     - url: /contact
       label: Get Started
@@ -566,68 +337,82 @@ All sections follow this pattern:
       buttonStyle: primary
   image:
     src: /assets/images/hero-image.jpg
-    alt: Description of image
+    alt: Description
 ```
 
-### Multi-Media Section
+**Multi-media (text + image side by side):**
 ```yaml
 - sectionType: multi-media
   text:
     title: About Us
-    prose: Our story and mission.
+    prose: Our story.
   media:
     type: image
     src: /assets/images/about.jpg
     alt: About image
-  isReverse: true              # Image on left, text on right
+  isReverse: true
 ```
 
-### Text-Only Section
+**Image grid:**
 ```yaml
-- sectionType: text-only
+- sectionType: image-grid
   text:
-    title: Our Services
-    prose: |-
-      Description of what we offer.
-      
-      - Service one
-      - Service two
-      - Service three
+    title: Our Work
+  images:
+    - src: /assets/images/work-1.jpg
+      alt: Project 1
+    - src: /assets/images/work-2.jpg
+      alt: Project 2
+    - src: /assets/images/work-3.jpg
+      alt: Project 3
 ```
-
-For complete configuration options, consult reference pages at metalsmith-components.com.
 
 ---
 
-# Troubleshooting
+## Troubleshooting
 
-**YAML errors**: Check indentation. Use 2 spaces consistently. No tabs.
+**YAML errors**: Check indentation. Use 2 spaces, no tabs. YAML is sensitive to spacing.
 
-**Section not rendering**: Verify `sectionType` matches folder name in `lib/layouts/components/sections/`.
+**Section not rendering**: Verify `sectionType` matches the folder name in `lib/layouts/components/sections/`.
 
 **Images not showing**: Paths must start with `/assets/`. Files go in `lib/assets/images/`.
 
-**Styles missing**: Restart dev server after adding new components.
+**Styles missing after adding component**: Restart dev server (Ctrl+C, then `npm start`).
 
-**Git push rejected**: Verify remote URL with `git remote -v`. Ensure repository exists on GitHub.
+**Git push fails**: Check that the remote repository exists and user has access. Verify with `git remote -v`.
 
-**Netlify build fails**: Check build log. Verify `npm run build` works locally. Confirm build command and publish directory settings.
+**Netlify build fails**: Check the deploy log in Netlify dashboard. Usually a missing dependency or incorrect build command.
 
 ---
 
-# Learning Resources
+## File Structure Reference
 
-## Metalsmith Components (metalsmith-components.com)
+```
+my-website/
+├── src/                          # Content pages
+│   ├── index.md                  # Homepage
+│   └── [other-pages].md
+├── lib/
+│   ├── assets/                   # Static files
+│   │   ├── images/
+│   │   ├── styles/
+│   │   └── scripts/
+│   ├── data/
+│   │   └── site.json             # Site configuration
+│   └── layouts/
+│       ├── components/
+│       │   ├── sections/         # Section components
+│       │   └── _partials/        # Shared partials
+│       └── pages/
+│           └── sections.njk      # Page template
+├── metalsmith.js                 # Build configuration
+└── package.json
+```
 
-- **Reference pages** - Complete docs for each component
-- **Blog posts** - Concepts and patterns explained
-- **Installation guide** - Component download and setup
+---
 
-## Metalsmith Redux Series (glinka.co/blog/)
+## Learning More
 
-- Templating with Nunjucks
-- Building Sectioned Webpages
-- The Anatomy of Section Components
-- How the Bundled Components Plugin Works
-
-See `references/learning-resources.md` for complete resource list.
+- **metalsmith-components.com** - Component reference and documentation
+- **glinka.co/blog** - Metalsmith Redux series with in-depth tutorials
+- `references/learning-resources.md` - Full resource list

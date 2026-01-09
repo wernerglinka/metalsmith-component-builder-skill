@@ -4,13 +4,6 @@
 
 **https://metalsmith-components.com** is the authoritative source for this structured Metalsmith approach. Always consult this site for accurate component configuration and patterns.
 
-## Related Skills
-
-When working on Metalsmith sites, these skills provide additional guidance:
-
-- **JavaScript Development**: `/mnt/skills/user/javascript-development/SKILL.md` - For writing plugins, custom scripts, or modifying component JavaScript
-- **CSS Layout Development**: `/mnt/skills/user/css-layout-development/SKILL.md` - For custom layouts, responsive design, and CSS modifications
-
 ## Metalsmith Components Documentation
 
 ### Reference Pages
@@ -26,64 +19,62 @@ Reference pages include:
 - Data structure requirements
 - Download button for the component package
 
-### Blog Posts at metalsmith-components.com
+### Key Blog Posts
 
-Educational posts explaining concepts and implementation:
+Fetch these when questions arise:
 
-**Getting Started**
-- **Installing Metalsmith Components** (`/blog/installing-metalsmith-components/`) - Complete guide to downloading and installing component packages
-
-**Understanding the Architecture**
-- **Section Anatomy** (`/section-anatomy/`) - How components are structured internally
-- **From YAML to HTML** (`/yaml-to-html/`) - Understanding the rendering process from frontmatter to final output
-
-**Building with Components**
-- **Building Pages with Components** (`/blog/building-pages-with-components/`) - Page construction patterns and best practices
-- **Building Interactive Components** (`/blog/building-interactive-components/`) - Adding JavaScript behavior to components
-- **Component Search System** (`/blog/building-component-search-system/`) - How to find the right components for your needs
-
-When uncertain about how something works, fetch the relevant blog post from metalsmith-components.com for authoritative guidance.
+- `/blog/installing-metalsmith-components/` - Download and install component packages
+- `/section-anatomy/` - How components are structured internally
+- `/yaml-to-html/` - The rendering process from frontmatter to final output
+- `/blog/building-pages-with-components/` - Page construction patterns
+- `/blog/building-interactive-components/` - Adding JavaScript behavior
 
 ## Metalsmith Redux Blog Series
 
-The Metalsmith Redux series at glinka.co/blog/ provides comprehensive tutorials on the broader Metalsmith ecosystem:
+The Metalsmith Redux series at glinka.co/blog/ provides in-depth tutorials:
 
-### Foundation Posts
+**Foundation**
+- Templating with Nunjucks
+- Adding Structured Components with Metalsmith MDN
 
-- **Metalsmith Redux: Templating with Nunjucks** - Template inheritance, macros, componentization
-- **Beyond Markdown: Adding Structured Components with Metalsmith MDN** - Using Nunjucks in markdown
+**Structured Content**
+- Building Sectioned Webpages
+- Introducing the Structured Content Starter
+- The Anatomy of Section Components
 
-### Structured Content Posts
-
-- **Beyond Markdown: Building Sectioned Webpages** - Component-first page building
-- **Introducing the Structured Content Starter** - Component architecture and dependency bundling
-- **The Anatomy of Section Components** - Configuration, templates, manifests, optimization
-
-### Advanced Topics
-
-- **The Missing Piece: How I Built the Metalsmith Bundled Components Plugin** - The componentDependencyBundler internals
-- **Metalsmith Redux: Conclusion** - Philosophy of simplicity
+**Advanced**
+- How the Bundled Components Plugin Works
+- Metalsmith Redux: Conclusion
 
 ## Key Concepts
 
-### Sectioned Pages vs Long-Text Markdown
+### Sectioned Pages
 
-Traditional static sites use markdown body content. Sectioned pages define all content in frontmatter as structured data. This enables:
+Traditional static sites use markdown body content. Sectioned pages define all content in frontmatter as structured data:
 
-- Reusable components across pages
-- Consistent styling and behavior
-- Content editor friendly workflows
-- Build-time optimization
+```yaml
+---
+sections:
+  - sectionType: hero
+    text:
+      title: Welcome
+  - sectionType: text-only
+    text:
+      title: About
+      prose: Content here.
+---
+```
+
+This enables reusable components, consistent styling, and build-time optimization.
 
 ### Component Dependency Bundler
 
-The componentDependencyBundler plugin:
+The `metalsmith-bundled-components` plugin:
 
 1. Scans pages to identify used sections
 2. Reads component manifests for dependencies
-3. Resolves dependency order (topological sort)
-4. Bundles only required CSS/JS
-5. Applies PostCSS processing
+3. Bundles only required CSS/JS
+4. Applies PostCSS processing
 
 ### Manifest Files
 
@@ -127,4 +118,4 @@ A minimal foundation with:
 - text-only section
 - Core partials (text, ctas, button, image)
 - Complete build infrastructure
-- Ready for component additions from metalsmith-components.com
+- Ready for component additions
