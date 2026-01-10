@@ -133,7 +133,7 @@ cd ..
 rm -rf hero hero.zip
 ```
 
-The install script copies files to correct locations and checks for dependencies. If a component requires partials not yet installed, download those too.
+The install script automatically downloads and installs any missing dependencies. If hero requires the `icon` partial and it's not installed, the script fetches and installs it before completing. Nested dependencies are handled recursively.
 
 After installing components, restart the dev server:
 ```bash
@@ -166,6 +166,19 @@ sections:
 ---
 ```
 
+### First Section Padding
+
+The first section on any page needs extra top padding to clear the fixed header. Add `first-section` to the classes:
+
+```yaml
+sections:
+  - sectionType: hero
+    classes: first-section
+    # ... rest of config
+```
+
+This applies to whatever section type appears first on a page, not just heroes.
+
 ### Site Configuration
 
 Update `lib/data/site.json` with the user's information:
@@ -191,6 +204,7 @@ All sections support these common options:
   containerFields:
     inContainer: true
     isAnimated: true
+    isDark: false
     background:
       color: ""
       image: /assets/images/bg.jpg
@@ -318,6 +332,37 @@ For detailed configuration of each component, fetch from metalsmith-components.c
 https://metalsmith-components.com/references/sections/[component-name]/
 ```
 
+### Data-Driven Components
+
+Some components (blurbs, logos-list, team-grid, etc.) expect data from JSON files in `lib/data/` rather than inline in frontmatter.
+
+**Blurbs example:**
+
+Create `lib/data/blurbs.json`:
+```json
+{
+  "services": [
+    {
+      "decoration": { "icon": "message-circle" },
+      "text": {
+        "title": "Service One",
+        "prose": "Description here."
+      }
+    }
+  ]
+}
+```
+
+Reference in frontmatter:
+```yaml
+- sectionType: blurbs
+  blurbs:
+    source: services
+    layout: inline
+```
+
+After creating new data files, restart the dev server.
+
 ### Quick Examples
 
 **Hero with background image:**
@@ -378,6 +423,10 @@ https://metalsmith-components.com/references/sections/[component-name]/
 **Images not showing**: Paths must start with `/assets/`. Files go in `lib/assets/images/`.
 
 **Styles missing after adding component**: Restart dev server (Ctrl+C, then `npm start`).
+
+**Text invisible on dark background**: Use `isDark: true` in containerFields when using a dark background color. This switches text to light colors. Note: `imageScreen: dark` only adds an overlay on background images, not solid colors.
+
+**New data file not picked up**: When creating new JSON files in `lib/data/`, restart the dev server manually after the file is written. The watcher may catch an incomplete file mid-write and error.
 
 **Git push fails**: Check that the remote repository exists and user has access. Verify with `git remote -v`.
 
